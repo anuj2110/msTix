@@ -1,4 +1,6 @@
 import express from "express";
+import mongoose from "mongoose";
+import "express-async-errors";
 import { currentUserRouter } from "./routes/current-user";
 import { signupRouter } from "./routes/signup";
 import { errorHandlerMiddleware } from "./middlewares/error-middleware";
@@ -15,6 +17,17 @@ app.all("*", () => {
   throw new NotFoundError();
 });
 app.use(errorHandlerMiddleware);
-app.listen(3000, () => {
-  console.log(`Listening @ Port ${3000}!`);
-});
+
+const start = async () => {
+  try {
+    await mongoose.connect("mongodb://auth-mongo-srv:27017");
+    console.log("Connected to DB!!");
+  } catch (error) {
+    console.log(error);
+  }
+  app.listen(3000, () => {
+    console.log(`Listening @ Port ${3000}!`);
+  });
+};
+
+start();
